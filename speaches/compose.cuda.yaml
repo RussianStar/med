@@ -1,0 +1,18 @@
+services:
+  speaches:
+    extends:
+      file: compose.yaml
+      service: speaches
+    image: ghcr.io/speaches-ai/speaches:latest-cuda
+    build:
+      args:
+        BASE_IMAGE: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+    volumes:
+      - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+volumes:
+  hf-hub-cache:

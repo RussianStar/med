@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Transcription Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Medical Transcription Interface</h1>
+            <div class="settings-toggle">
+                <button id="settingsButton">Settings</button>
+            </div>
+        </header>
+
+        <div id="settingsPanel" class="settings-panel hidden">
+            <h2>Configuration Settings</h2>
+            <div class="settings-group">
+                <label for="whisperEndpoint">Whisper API Endpoint:</label>
+                <input type="text" id="whisperEndpoint" value="https://api.openai.com/v1/audio/transcriptions">
+            </div>
+            <div class="settings-group">
+                <label for="llmEndpoint">LLM API Endpoint:</label>
+                <input type="text" id="llmEndpoint" placeholder="http://localhost:11434/v1/chat/completions">
+            </div>
+            <div class="settings-group">
+                <label for="apiKey">API Key (if needed):</label>
+                <input type="password" id="apiKey" placeholder="Enter API key">
+            </div>
+            <div class="settings-group">
+                <label for="llmModel">LLM Model:</label>
+                <input type="text" id="llmModel" value="llama3">
+            </div>
+            <button id="saveSettings">Save Settings</button>
+        </div>
+
+        <main>
+            <section id="recordingSection" class="panel">
+                <h2>Audio Recording</h2>
+                <div class="device-selection">
+                    <label for="audioDevice">Select Input Device:</label>
+                    <select id="audioDevice"></select>
+                </div>
+                <div class="controls">
+                    <button id="recordButton" class="record-button">Start Recording</button>
+                    <div id="recordingStatus" class="status">Ready</div>
+                    <div id="audioVisualizer" class="visualizer"></div>
+                </div>
+            </section>
+
+            <section id="transcriptionSection" class="panel">
+                <h2>Live Transcription</h2>
+                <div id="transcriptionOutput" class="output-area"></div>
+            </section>
+
+            <section id="summarySection" class="panel">
+                <h2>Medical Summary</h2>
+                <button id="generateSummary" class="action-button" disabled>Generate Summary</button>
+                <div id="summaryOutput" class="output-area"></div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="status-bar">
+                <span id="systemStatus">System Ready</span>
+                <span id="connectionStatus">All Systems Nominal</span>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

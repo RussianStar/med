@@ -1,0 +1,92 @@
+version: "3.9"
+services:
+  speaches:
+    build:
+      context: ./speaches
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: ${CUDA_BASE_IMAGE:-nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04}
+    image: ghcr.io/speaches-ai/speaches:latest-cuda
+    ports:
+      - 8000:8000
+    container_name: speaches
+    restart: always
+    volumes:
+      - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - ollama_talk
+
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    container_name: medical-transcription-app
+    restart: always
+    networks:
+      - ollama_talk
+
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    volumes:
+      - ollama:/root/.ollama
+      - ~/model_files:/root/model_files
+    ports:
+      - 11434:11434
+    container_name: ollama
+    image: ollama/ollama
+    restart: always
+    environment:
+      - OLLAMA_FLASH_ATTENTION=1
+      - OLLAMA_KV_CACHE_TYPE="q8_0"
+      - OLLAMA_NUM_PARALLEL=1
+      - HUGGINGFACE_ACCELERATE_USE_CUDA=1
+      - OLLAMA_NUM_GPU_LAYERS=9999
+      - OLLAMA_BATCH_SIZE=8192
+      - OLLAMA_GPUMEMORY=12000MB
+      - GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+      - OLLAMA_DEBUG=0
+      - OLLAMA_GPUSPLIT="12"
+    networks:
+      - ollama_talk
+  open-webui:
+    ports:
+      - 7000:8080
+    volumes:
+      - open-webui:/app/backend/data
+    container_name: open-webui
+    restart: always
+    image: ghcr.io/open-webui/open-webui:latest
+    networks:
+      - ollama_talk
+
+volumes:
+  open-webui: null
+  ollama: null
+  hf-hub-cache:
+    external: true
+networks:
+  ollama_talk:
+    name: ollama_talk
+    external: true
