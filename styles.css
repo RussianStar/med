@@ -174,16 +174,17 @@ main {
 }
 
 .device-selection {
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* Reduced from 20px */
 }
 
 .device-selection select {
-    width: 100%;
-    padding: 10px;
-    background-color: rgba(44, 149, 200, 0.1);
+    width: 80%;
+    padding: 5px;
+    background-color: rgba(44, 149, 200, 0.05);
     border: 1px solid var(--primary-color);
     border-radius: 5px;
     color: var(--text-color);
+    font-size: 0.8em;
 }
 
 .controls {
