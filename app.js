@@ -12,6 +12,10 @@ const summaryOutput = document.getElementById('summaryOutput');
 const systemStatus = document.getElementById('systemStatus');
 const connectionStatus = document.getElementById('connectionStatus');
 
+// New Patient Info Elements
+const patientFirstNameInput = document.getElementById('patientFirstName');
+const patientLastNameInput = document.getElementById('patientLastName');
+
 // Settings
 const whisperEndpointInput = document.getElementById('whisperEndpoint');
 const llmEndpointInput = document.getElementById('llmEndpoint');
@@ -41,7 +45,9 @@ let settings = {
         ? 'http://ollama:11434/v1/chat/completions'
         : 'http://localhost:11434/v1/chat/completions',
     apiKey: '',
-    llmModel: 'llama3'
+    llmModel: 'llmModelInput.value = settings.llmModel;',
+    firstName: '', // New property
+    lastName: ''   // New property
 };
 
 // Initialize the application
@@ -62,15 +68,28 @@ function loadSettings() {
         llmEndpointInput.value = settings.llmEndpoint;
         apiKeyInput.value = settings.apiKey;
         llmModelInput.value = settings.llmModel;
+
+        // Load new patient info fields
+        patientFirstNameInput.value = settings.firstName || '';
+        patientLastNameInput.value = settings.lastName || '';
+    } else {
+        // Set default values if no saved settings
+        patientFirstNameInput.value = '';
+        patientLastNameInput.value = '';
     }
 }
 
 // Save settings to localStorage
 function saveSettings() {
+    // Update existing settings
     settings.whisperEndpoint = whisperEndpointInput.value;
     settings.llmEndpoint = llmEndpointInput.value;
     settings.apiKey = apiKeyInput.value;
     settings.llmModel = llmModelInput.value;
+
+    // Save new patient info fields
+    settings.firstName = patientFirstNameInput.value.trim();
+    settings.lastName = patientLastNameInput.value.trim();
 
     localStorage.setItem('transcriptionSettings', JSON.stringify(settings));
     settingsPanel.classList.add('hidden');
